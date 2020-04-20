@@ -1,0 +1,354 @@
+%%%
+% set up document type
+%%%
+\documentclass[12pt]{article}
+
+%%%
+% declare all packages
+%%%
+\usepackage[left=25mm, top=20mm, right=25mm, bottom=30mm,nohead,nofoot]{geometry} 
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+
+\usepackage{graphics, graphicx}
+
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{amssymb,latexsym} 
+\usepackage{MnSymbol}
+\usepackage{mathrsfs}
+
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{delarray}
+
+\usepackage{color,colortbl}
+
+% \usepackage{verbatim}
+%%%
+% document settings
+%%%
+\setcounter{tocdepth}{4}
+\graphicspath{ {./pic/} }
+
+\renewcommand{\listoffigures}{\begingroup  % add number to list of graphics
+\tocsection
+\tocfile{\listfigurename}{lof}
+\endgroup}
+\renewcommand{\listoftables}{\begingroup  % add number to list of tables
+\tocsection
+\tocfile{\listtablename}{lot}
+\endgroup}
+
+\newcommand{\RomanNum}[1]
+    {\MakeUppercase{\romannumeral #1}}
+
+%******************************************************************
+%******************************************************************
+\begin{document}
+
+\begin{titlepage}
+	\center
+		Санкт-Петербургский Политехнический 
+		университет \\ Петра Великого\\
+		Институт прикладной математики и механики
+		\\ \textbf{Высшая школа прикладной математики и вычислительной физики}
+
+	\vfill ~
+	\textbf{
+		\\ \large РАСЧЁТНОЕ ЗАДАНИЕ №2
+	}
+	\\	на тему 
+	\\ "Поиск оптимального управления"
+	\\ по дисциплине
+	\\ "Математическая теория управления"
+    \\ \textbf{вариант №3}
+	\vfill ~
+    
+    
+    \begin{flushleft}
+    \underline{Выполнил:}  \hspace{\fill} студент гр.3630102/60101 \textbf{Лансков.Н.В.} \linebreak[2]
+	\underline{Руководитель:} \hspace{\fill} доцент \textbf{Суханов А.А.} \\ 
+    \end{flushleft}
+    
+
+\vfill
+
+{\large}	Санкт-Петербург
+\\ 2020
+\end{titlepage}
+
+%%%
+% Table of conetnts 
+%%%
+
+\tableofcontents
+\pagebreak
+% \listoffigures
+% \listoftables
+% \newpage
+
+%%%
+% Text
+%%%
+\section{Постановка задачи}
+
+Дана система:
+\begin{equation}\label{eq1}
+ \begin{cases}
+  \ddot x - \omega_0^2x = u\\
+  x(0) = x_0 \\
+  \dot x(0) = v_0
+ \end{cases}
+\end{equation}
+
+Требуется найти такое оптимальное управление с обратной связью, при котором будет достигать минимума интегрально квадратичный функционал качества О:
+
+\begin{equation}
+ J = \int\limits_{0}^{\infty}(x^2 + q\dot x^2 + ru^2)dt \rightarrow min
+\end{equation}
+
+Кроме того, требуется определить значение минимума этого функционала при значениях параметров:
+
+$$
+ \begin{cases}
+  q = \dfrac{1}{3} ,\ r = \dfrac{1}{9} \\
+  \omega_0 = 1.5 \\
+  x_0 = 1 \\
+  v_0 = 8
+ \end{cases}
+$$
+
+
+
+\section{Решение}
+
+Сначала переведём систему (\ref{eq1}) в пространство состояний. Для этого воспользуемся общей методикой перевода системы в пространство состояний:
+
+\begin{enumerate}
+ \item $ x = x_1 \Rightarrow C = (1, 0)$
+ \item $ D(\dot x_1) = u + \omega_0^2x_1$
+\end{enumerate}
+Положив $\dot x_1 = x_2$, запишем систему
+
+$$
+ \begin{cases}
+  \dot x_2 = u + \omega_0^2x_1 \\
+  x_2(0) = \dot x_1(0) = \dot x(0) = v_0 
+ \end{cases} 
+$$
+
+Таким образом, система (\ref{eq1}) перепишется в пространстве состояний в следующем виде:
+
+\begin{equation}\label{eq3}
+ \begin{cases}
+  \dot x_1 = x_2 \\
+  \dot x_2 = u + \omega_0^2x_1 \\
+  x_1(0) = x_0 \\
+  x_2(0) = v_0
+ \end{cases}
+\end{equation}
+
+\pagebreak
+Найдём вид матриц $A, B$:
+
+\begin{equation}
+ A = 
+ \begin{pmatrix}
+  0 & 1\\
+  \omega_0^2 & 0 \\
+ \end{pmatrix}
+ , \ B = 
+ \begin{pmatrix}
+  0 \\
+  1
+ \end{pmatrix}
+\end{equation}
+
+В общем виде интегрально-квадратичный функционал качества записывается так:
+
+\begin{equation}
+ J = \int\limits_{0}^{\infty} (x^TQx + u^TRu)dt
+\end{equation}
+
+Определим вид матриц $Q, R$:
+
+\begin{equation}
+ Q = 
+ \begin{pmatrix}
+  1 & 0\\
+  0 & q \\
+ \end{pmatrix}
+ , \ R = r
+\end{equation}
+
+Известно, что оптимальное управление $u^{opt} = -K^*x$, причём коэффициенты $K^* = (K_1, K_2)$ могут быть вычислены из следлующей системы уравнений:
+
+\begin{equation}
+ K^* = R^{-1}B^TP^*
+\end{equation}
+
+где $P^*$ - неортрицательное решение матричного уравнения Риккатти-Лурье. В таком случае, минимум функционала $J_{min} = x_0^TPx_0$.
+Для применения теоремы о существовании и единственности неотрицательного решения уравнения Риккатти-Лурье необходимо проверить систему (\ref{eq3}) на полную управляемость, также необходимо удостовериться в том, что $Q \geq 0, R > 0$. Для проверки системы на полную управляемость воспользуемся теоремой Калмана и проверим выполнение условия:
+
+\begin{equation}
+ rankA_u = rank(B, AB) = rank
+ \begin{pmatrix}
+  1 & 0 \\
+  0 & 1 \\
+ \end{pmatrix}
+ = 2
+\end{equation}
+
+Значит, условия теоремы выполнены.
+
+\subsection{Программный расчёт с использованием python}
+
+Воспользуемся встроенной функцией (K, P) = control.lqr(A, B, Q, R). Эта функция в качестве возвращаемых значений выдаёт вектор коэффициентов $K^*$ и матрицу $P^*$.
+
+В результате получаем:
+\begin{equation}
+ K^* = (6, 3.87298335), \
+ P^* = 
+ \begin{pmatrix}
+  1.61374306 & 0.66666667 \\
+  0.66666667 & 0.43033148 \\
+ \end{pmatrix}
+\end{equation}
+
+\begin{equation}
+J_{min} = 39.82162463 
+\end{equation}
+
+\begin{equation}
+ u^{opt} = -K^*x = -6x_1 - 3.87298335x_2 = -6x - 3.87298335\dot x
+\end{equation}
+
+\subsection{Ручной расчёт}
+
+Найдём решение уравнения Риккатти-Лурье:
+
+\begin{equation}
+ A^TP + PA - PBR^{-1}B^TP + Q = 0s
+\end{equation}
+
+\begin{eqnarray}
+  \begin{pmatrix}
+   0 & \omega_0^2 \\
+   1 & 0
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    p_{11} & p_{12} \\
+    p_{11} & p_{22} \\
+  \end{pmatrix}
+  + 
+  \begin{pmatrix}
+    p_{11} & p_{12} \\
+    p_{11} & p_{22} \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+   0 & 1 \\
+   \omega_0^2 & 0
+  \end{pmatrix}
+  - \nonumber \\
+  \begin{pmatrix}
+    p_{11} & p_{12} \\
+    p_{11} & p_{22} \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    0 \\ 1
+  \end{pmatrix}
+  \cdot \dfrac{1}{r}
+  \cdot 
+  \begin{pmatrix}
+    0 & 1 \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    p_{11} & p_{12} \\
+    p_{11} & p_{22} \\
+  \end{pmatrix}
+  +  
+  \begin{pmatrix}
+    1 & 0 \\
+    0 & q \\
+  \end{pmatrix}
+  = 0
+\end{eqnarray}
+
+Иначе,
+\begin{equation}
+ \begin{pmatrix}
+  2\omega_0^2p_{12} - \dfrac{p_{12}^2}{r} + 1 &
+  \omega_0^2p_{22} + p_{11} - \dfrac{p_{12}p_{22}}{r} \\
+  \omega_0^2p_{22} + p_{11} - \dfrac{p_{12}p_{22}}{r} &
+  2p_{12} - \dfrac{p_{22}}{r} + q
+ \end{pmatrix}
+  = 0
+\end{equation}
+
+Найдём решение системы:
+
+\begin{equation}
+ \begin{cases}
+  2\omega_0^2p_{12} - \dfrac{p_{12}^2}{r} + 1 = 0\\
+  \omega_0^2p_{22} + p_{11} - \dfrac{p_{12}p_{22}}{r} = 0 \\
+  2p_{12} - \dfrac{p_{22}}{r} + q = 0
+ \end{cases}
+\end{equation}
+
+В результате получаем следующие соотношения:
+
+\begin{equation}
+ \begin{cases}
+  p_{12} = \dfrac{2r\omega_0^2 \pm \sqrt{4r^2\omega_0^4 + 4r}}{2}\\
+  p_{22} = \pm \sqrt{2rp_{12} + qr} \\
+  p_{11} = \dfrac{p_{12}p_{22}}{r} - \omega_0^2p_{22}
+ \end{cases}
+\end{equation}
+
+Подставив заданные в условии значения констант, получаем:
+
+\begin{equation}
+ P_1 = 
+ \begin{pmatrix}
+  1.61374306 & 0.66666667 \\
+  0.66666667 & 0.43033148 \\
+ \end{pmatrix}, \
+ P_2 = 
+ \begin{pmatrix}
+  -1.61374306 & 0.66666667 \\
+  0.66666667 & -0.43033148 \\
+ \end{pmatrix}
+\end{equation}
+
+Следовательно, $P^* = P_1$. Тогда:
+
+\begin{equation}
+ K^* = (R^{-1}B^TP^*) = (6, 3.87298335)
+\end{equation}
+
+\begin{equation}
+J_{min} = 39.82162463 
+\end{equation}
+
+\begin{equation}
+ u^{opt} = -K^*x = -6x_1 - 3.87298335x_2 = -6x - 3.87298335\dot x
+\end{equation}
+
+\section{Результаты}
+В результате работы было найдено оптимальное управление с обратной связью для поставленной задачи(программно и `вручную`), а также определено значение минимума функционала качества.
+
+\section{Приложения}
+Расчётное задание выполнено с использованием системы вёрстки Latex.
+\end{document}
+
